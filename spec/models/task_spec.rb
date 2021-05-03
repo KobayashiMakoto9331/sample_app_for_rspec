@@ -13,31 +13,32 @@ RSpec.describe Task, type: :model do
 
     #titleがなければ無効であること
     it "is invalid with a title" do
-      task = build(:task, title: nil)
-      expect(task).to be_invalid
-      expect(task.errors[:title]).to include("can't be blank")
+      task_withoud_title = build(:task, title: nil)
+      expect(task_withoud_title).to be_invalid
+      expect(task_withoud_title.errors[:title]).to eq ["can't be blank"]
     end
 
     #statusがなければ無効であること
     it "is invalid with a status" do
-      task = build(:task, status: nil)
-      expect(task).to be_invalid
-      expect(task.errors[:status]).to include("can't be blank")
+      task_withoud_status = build(:task, status: nil)
+      expect(task_withoud_status).to be_invalid
+      expect(task_withoud_status.errors[:status]).to eq ["can't be blank"]
     end
     
     #重複したtitleは無効であること
     it "is invalid with a duplicate title" do
-      FactoryBot.create(:task, title: "same_tatle")
-      new_task = FactoryBot.build(:task, title: "same_tatle")
-      new_task.valid?
-      expect(new_task.errors[:title]).to include("has already been taken")
+      task = create(:task, title: "same_tatle")
+      task_with_duplicated_title = build(:task, title: "same_tatle")
+      expect(task_with_duplicated_title).to be_invalid
+      expect(task_with_duplicated_title.errors[:title]).to eq ["has already been taken"]
     end
 
     #異なるtitleである時有効であること
     it "is valid with another title" do
-      FactoryBot.create(:task)
-      new_task = FactoryBot.build(:task)
-      expect(new_task).to be_valid
+      task = create(:task)
+      task_with_another_title = build(:task, title: 'another_title')
+      expect(task_with_another_title).to be_valid
+      expect(task_with_another_title.errors).to be_empty
     end
 
   end
